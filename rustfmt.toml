@@ -1,0 +1,3 @@
+max_width = 2000
+imports_layout = "Horizontal"
+imports_indent = "Visual"
