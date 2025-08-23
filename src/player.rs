@@ -61,7 +61,7 @@ pub fn player_movement_system(move_timer: &mut Timer, arena: &Vec2i32, player_id
     }
 }
 
-pub fn player_weapon_system(arena: &Vec2i32, player: &Player, weapon_timer: &mut Timer, collider_grid: &ColliderGrid, particle_events: &mut Events<Draw>, damage_events: &mut Events<Damage>, entities: &Entities, inputs: &Inputs, positions: &Components<Vec2i32>) {
+pub fn player_weapon_system(arena: &Vec2i32, player: &Player, weapon_timer: &mut Timer, collider_grid: &ColliderGrid, draw_events: &mut Events<Draw>, damage_events: &mut Events<Damage>, entities: &Entities, inputs: &Inputs, positions: &Components<Vec2i32>) {
     let player_pos = *positions.get(entities, player.id).unwrap();
 
     let mut dir = (0, 0);
@@ -84,7 +84,7 @@ pub fn player_weapon_system(arena: &Vec2i32, player: &Player, weapon_timer: &mut
         Weapon::Stick => {
             let attack_mid = (player_pos.0 + dir.0 * 2, player_pos.1 + dir.1 * 2);
             let attack_top_left = (attack_mid.0 - 1, attack_mid.1 - 1);
-            particle_events.push(Draw { particle: DrawInfo { sprite: Sprite { char: '.', ..Default::default() }, shape: Shape::Rectangle { w: 3, h: 3 }, timer: Timer::new(Duration::from_millis(50)) }, position: attack_top_left });
+            draw_events.push(Draw { draw_info: DrawInfo { sprite: Sprite { char: '.', ..Default::default() }, shape: Shape::Rectangle { w: 3, h: 3 }, timer: Timer::new(Duration::from_millis(50)) }, position: attack_top_left });
             for x in 0..3 {
                 for y in 0..3 {
                     let found = collider_grid.get(arena_collider_pos(arena, (attack_top_left.0 + x, attack_top_left.1 + y)));

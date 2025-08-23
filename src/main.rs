@@ -37,14 +37,14 @@ fn main() {
     let mut positions: Components<Vec2i32> = Default::default();
     let mut sprites: Components<Sprite> = Default::default();
     let mut move_timers: Components<Timer> = Default::default();
-    let mut particles: Components<DrawInfo> = Default::default();
+    let mut draw_infos: Components<DrawInfo> = Default::default();
     let mut damaged_timers: Components<Timer> = Default::default();
     let mut damaged_colors: Components<Color> = Default::default();
 
     // Events
     let mut damage_events: Events<Damage> = Default::default();
     let mut kill_events: Events<Kill> = Default::default();
-    let mut spawn_particle_events: Events<Draw> = Default::default();
+    let mut spawn_draw_events: Events<Draw> = Default::default();
 
     // Resources
     let mut inputs: Inputs = Default::default();
@@ -83,7 +83,7 @@ fn main() {
         // Event intialization ========================================================================================
         damage_events.clear();
         kill_events.clear();
-        spawn_particle_events.clear();
+        spawn_draw_events.clear();
 
         // Delta calculation ==========================================================================================
         let next_instant = std::time::Instant::now();
@@ -111,7 +111,7 @@ fn main() {
             }
 
             player_movement_system(&mut move_timer, &arena_extend, player_id, &inputs, &mut collider_grid, &mut entities, &mut positions);
-            player_weapon_system(&arena_extend, &player, &mut weapon_timer, &collider_grid, &mut spawn_particle_events, &mut damage_events, &entities, &inputs, &positions);
+            player_weapon_system(&arena_extend, &player, &mut weapon_timer, &collider_grid, &mut spawn_draw_events, &mut damage_events, &entities, &inputs, &positions);
 
             enemy_follow_system(&arena_extend, &player, &enemies, &mut collider_grid, &mut damage_events, &entities, &mut positions, &mut move_timers);
             damage_system(&mut stdout, &damage_events, &mut kill_events, &entities, &mut hps, &mut damaged_timers);
@@ -119,14 +119,14 @@ fn main() {
             player_killed_system(&kill_events, &mut player_dead, &player);
         }
 
-        spawn_particle_system(&spawn_particle_events, &mut entities, &mut positions, &mut particles);
+        spawn_draw_system(&spawn_draw_events, &mut entities, &mut positions, &mut draw_infos);
 
         // Rendering  ----------------------------------------------------------------------------------------------
 
         let mut stdout = stdout.lock();
         queue!(&mut stdout, terminal::BeginSynchronizedUpdate, terminal::Clear(terminal::ClearType::Purge)).unwrap();
 
-        particle_system(&mut stdout, delta, camera_id, &mut entities, &positions, &mut particles);
+        draw_system(&mut stdout, delta, camera_id, &mut entities, &positions, &mut draw_infos);
         sprite_system(&mut stdout, camera_id, &entities, &positions, &sprites, &damaged_timers, &damaged_colors);
         visualize_arena_wall_system(&mut stdout, &arena_extend, camera_id, &entities, &positions);
         hud_system(&mut stdout, &arena_extend, &score, &player, &entities, &hps, &max_hps);
