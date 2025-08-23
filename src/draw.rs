@@ -9,24 +9,25 @@ pub enum Shape {
 pub struct DrawInfo {
     pub sprite: Sprite,
     pub shape: Shape,
-    pub timer: Timer,
 }
 
 #[derive(Clone)]
 pub struct Draw {
     pub draw_info: DrawInfo,
     pub position: Vec2i32,
+    pub timer: Timer,
 }
 
-pub fn spawn_draw_system(spawn_events: &Events<Draw>, entities: &mut Entities, positions: &mut Components<Vec2i32>, draw_infos: &mut Components<DrawInfo>) {
+pub fn spawn_draw_system(spawn_events: &Events<Draw>, entities: &mut Entities, positions: &mut Components<Vec2i32>, draw_infos: &mut Components<DrawInfo>, draw_timer: &mut Components<Timer>) {
     for spawn in spawn_events {
         let id = entities.spawn();
         draw_infos.insert(entities, id, spawn.draw_info.clone()).unwrap();
         positions.insert(entities, id, spawn.position).unwrap();
+        draw_timer.insert(entities, id, spawn.timer.clone()).unwrap();
     }
 }
 
-pub fn draw_system(stdout: &mut StdoutLock, delta: Duration, camera: Entity, entities: &mut Entities, positions: &Components<Vec2i32>, draw_infos: &mut Components<DrawInfo>) {
+pub fn draw_system(stdout: &mut StdoutLock, camera: Entity, entities: &mut Entities, positions: &Components<Vec2i32>, draw_infos: &mut Components<DrawInfo>, draw_timer: &Components<Timer>) {
     let camera_pos = *positions.get(entities, camera).unwrap();
     let terminal_size = terminal::size().expect("Terminal size");
     let terminal_size = (terminal_size.0 as i32, terminal_size.1 as i32);
@@ -36,8 +37,8 @@ pub fn draw_system(stdout: &mut StdoutLock, delta: Duration, camera: Entity, ent
     for id in entities.iter() {
         let Ok(pos) = positions.get(entities, id) else { continue };
         let Ok(draw_info) = draw_infos.get_mut(entities, id) else { continue };
-        draw_info.timer.current += delta;
-        if draw_info.timer.finished() {
+        let Ok(timer) = draw_timer.get(entities, id) else { continue };
+        if timer.finished() {
             to_despawn.push(id);
             continue;
         }

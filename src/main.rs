@@ -1,3 +1,5 @@
+#![allow(clippy::too_many_arguments)]
+
 use prelude::*;
 
 mod prelude;
@@ -38,6 +40,7 @@ fn main() {
     let mut sprites: Components<Sprite> = Default::default();
     let mut move_timers: Components<Timer> = Default::default();
     let mut draw_infos: Components<DrawInfo> = Default::default();
+    let mut draw_timers: Components<Timer> = Default::default();
     let mut damaged_timers: Components<Timer> = Default::default();
     let mut damaged_colors: Components<Color> = Default::default();
 
@@ -98,6 +101,8 @@ fn main() {
             break;
         }
 
+        timer_system(delta, &entities, &mut draw_timers);
+
         if !player_dead {
             move_timer.current += delta;
             spawn_enemy_timer.current += delta;
@@ -119,14 +124,14 @@ fn main() {
             player_killed_system(&kill_events, &mut player_dead, &player);
         }
 
-        spawn_draw_system(&spawn_draw_events, &mut entities, &mut positions, &mut draw_infos);
+        spawn_draw_system(&spawn_draw_events, &mut entities, &mut positions, &mut draw_infos, &mut draw_timers);
 
         // Rendering  ----------------------------------------------------------------------------------------------
 
         let mut stdout = stdout.lock();
         queue!(&mut stdout, terminal::BeginSynchronizedUpdate, terminal::Clear(terminal::ClearType::Purge)).unwrap();
 
-        draw_system(&mut stdout, delta, camera_id, &mut entities, &positions, &mut draw_infos);
+        draw_system(&mut stdout, camera_id, &mut entities, &positions, &mut draw_infos, &draw_timers);
         sprite_system(&mut stdout, camera_id, &entities, &positions, &sprites, &damaged_timers, &damaged_colors);
         visualize_arena_wall_system(&mut stdout, &arena_extend, camera_id, &entities, &positions);
         hud_system(&mut stdout, &arena_extend, &score, &player, &entities, &hps, &max_hps);
