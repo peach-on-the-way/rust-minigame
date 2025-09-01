@@ -88,7 +88,7 @@ fn main() {
         kill_events.clear();
         spawn_draw_events.clear();
 
-        // Delta calculation ==========================================================================================
+        // Delta time calculation ======================================================================================
         let next_instant = std::time::Instant::now();
         let delta = next_instant - prev_instant;
         prev_instant = std::time::Instant::now();
@@ -110,6 +110,7 @@ fn main() {
             timer_system(delta, &entities, &mut move_timers);
             timer_system(delta, &entities, &mut damaged_timers);
 
+            // Spawn an enemy at every some amount of time
             if spawn_enemy_timer.finished() {
                 spawn_enemy_system(&arena_extend, &mut enemies, &mut collider_grid, &mut entities, &mut sprites, &mut positions, &mut hps, &mut move_timers, &mut damaged_timers, &mut damaged_colors);
                 spawn_enemy_timer.reset();
@@ -128,7 +129,11 @@ fn main() {
 
         // Rendering  ----------------------------------------------------------------------------------------------
 
+        // Lock the stdout just in case. It can cause bottleneck sometimes without this.
         let mut stdout = stdout.lock();
+
+        // Clear the terminal
+        // And syncronize to prevent tearing
         queue!(&mut stdout, terminal::BeginSynchronizedUpdate, terminal::Clear(terminal::ClearType::Purge)).unwrap();
 
         draw_system(&mut stdout, camera_id, &mut entities, &positions, &mut draw_infos, &draw_timers);
