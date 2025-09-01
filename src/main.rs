@@ -21,11 +21,6 @@ mod utils;
 fn main() {
     let mut stdout = io::stdout();
 
-    if !terminal::supports_keyboard_enhancement().expect("Check keyboard enhancement") {
-        println!("Your terminal does not support keyboard enhancement! Please change your terminal.");
-        return;
-    }
-
     // Setup terminal
     terminal::enable_raw_mode().expect("Enable raw mode");
     execute!(&mut stdout, terminal::EnterAlternateScreen, terminal::DisableLineWrap, event::DisableBracketedPaste, event::DisableMouseCapture, cursor::Hide, cursor::SavePosition, event::PushKeyboardEnhancementFlags(event::KeyboardEnhancementFlags::all()),).expect("Initialize terminal");
