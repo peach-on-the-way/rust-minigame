@@ -1,7 +1,6 @@
 # Technical Requirements
 1. You must use a terminal emulator that supports progressive keyboard enhancement
-  (Usually the [kitty keyboard protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/) which most modern terminal supports it).
-
+  (Usually the [kitty keyboard protocol](https://sw.kovidgoyal.net/kitty/keyboard-protocol/) which most modern terminal supports it).<br/>
   List of supported terminals:
     - [alacritty](https://alacritty.org/) (Windows, macOS, Linux)
     - [WezTerm](https://wezterm.org/) (Windows, macOS, Linux)
