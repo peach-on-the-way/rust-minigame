@@ -1,11 +1,17 @@
+//! Handles sprite
+
 use crate::prelude::*;
 
+/// A component that display [`char`]
 #[derive(Default, Clone)]
 pub struct Sprite {
+    /// The [`char`]
     pub char: char,
+    /// The style to display
     pub style: style::ContentStyle,
 }
 
+/// Render [`Sprite`] to the terminal
 pub fn sprite_system(stdout: &mut StdoutLock, camera: Entity, entities: &Entities, positions: &Components<Vec2i32>, sprites: &Components<Sprite>, damaged_timer: &Components<Timer>, damaged_color: &Components<Color>) {
     let camera_pos = *positions.get(entities, camera).unwrap();
     let terminal_size = terminal::size().expect("Terminal size");
@@ -21,6 +27,7 @@ pub fn sprite_system(stdout: &mut StdoutLock, camera: Entity, entities: &Entitie
         }
         let mut content = sprite.char.stylize();
         *content.style_mut() = sprite.style;
+        // Special effect when an entity is damaged
         if let Ok(timer) = damaged_timer.get(entities, id)
             && let Ok(color) = damaged_color.get(entities, id)
             && !timer.finished()
