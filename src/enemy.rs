@@ -1,12 +1,22 @@
+//! Handles enemy
+
 use crate::prelude::*;
 
+/// Spawn a single enemy when runs
 pub fn spawn_enemy_system(arena: &Vec2i32, enemies: &mut HashSet<Entity>, collider_grid: &mut ColliderGrid, entities: &mut Entities, sprites: &mut Components<Sprite>, positions: &mut Components<Vec2i32>, hps: &mut Components<Health>, move_timers: &mut Components<Timer>, damaged_timer: &mut Components<Timer>, damaged_color: &mut Components<Color>) {
     let enemy_id = entities.spawn();
+
+    // Generate a random position within the arena
     let mut pos = (rand::random_range(-arena.0..=arena.0), rand::random_range(-arena.1..=arena.1));
+
+    // Change position if that position already has something in it
     while collider_grid.get(arena_collider_pos(arena, pos)).is_some() {
         pos = (rand::random_range(-arena.0..=arena.0), rand::random_range(-arena.1..=arena.1));
     }
+
+    // Chance for a special enemy
     let special = rand::random_bool(0.1);
+
     collider_grid.insert(arena_collider_pos(arena, pos), Some(enemy_id));
     if special {
         sprites.insert(entities, enemy_id, Sprite { char: '%', style: style::ContentStyle { foreground_color: Some(Color::AnsiValue(75)), ..Default::default() } }).unwrap();
@@ -22,6 +32,7 @@ pub fn spawn_enemy_system(arena: &Vec2i32, enemies: &mut HashSet<Entity>, collid
     enemies.insert(enemy_id);
 }
 
+/// Basic enemy behavior by making it follows the player
 pub fn enemy_follow_system(arena: &Vec2i32, player: &Player, enemies: &HashSet<Entity>, collider_grid: &mut ColliderGrid, damage_events: &mut Events<Damage>, entities: &Entities, positions: &mut Components<Vec2i32>, move_timers: &mut Components<Timer>) {
     let player_pos = *positions.get(entities, player.id).unwrap();
     for enemy_id in enemies.iter() {
@@ -56,6 +67,7 @@ pub fn enemy_follow_system(arena: &Vec2i32, player: &Player, enemies: &HashSet<E
     }
 }
 
+/// Cleanup states after the enemy has been killed
 pub fn enemy_killed_system(arena: &Vec2i32, kill_events: &Events<Kill>, collider_grid: &mut ColliderGrid, score: &mut i32, enemies: &mut HashSet<Entity>, entities: &mut Entities, positions: &Components<Vec2i32>) {
     for dead in kill_events {
         if !enemies.contains(&dead.target) {
