@@ -1,5 +1,8 @@
+//! Handles UI
+
 use crate::prelude::*;
 
+/// Visualize the wall at the top and bottom
 pub fn visualize_arena_wall_system(stdout: &mut StdoutLock, arena: &Vec2i32, camera: Entity, entities: &Entities, positions: &Components<Vec2i32>) {
     let camera_pos = *positions.get(entities, camera).unwrap();
     let terminal_size = terminal::size().expect("Terminal size");
@@ -28,6 +31,7 @@ pub fn visualize_arena_wall_system(stdout: &mut StdoutLock, arena: &Vec2i32, cam
     }
 }
 
+/// Display stats about the game and player
 pub fn hud_system(stdout: &mut StdoutLock, arena: &Vec2i32, score: &i32, player: &Player, entities: &Entities, hps: &Components<Health>, max_hps: &Components<Health>) {
     let terminal_size = terminal::size().expect("Terminal size");
     let terminal_size = (terminal_size.0 as i32, terminal_size.1 as i32);
@@ -46,6 +50,7 @@ pub fn hud_system(stdout: &mut StdoutLock, arena: &Vec2i32, score: &i32, player:
     let _ = queue!(stdout, cursor::MoveTo(terminal_pos.0 as u16, terminal_pos.1 as u16 + 2), style::Print(format!("Score : {score}")));
 }
 
+/// Show end screen after the player died
 pub fn display_end_screen_system(stdout: &mut StdoutLock, score: &i32) {
     let terminal_size = terminal::size().expect("Terminal size");
     let terminal_size = (terminal_size.0 as i32, terminal_size.1 as i32);
