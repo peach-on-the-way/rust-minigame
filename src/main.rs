@@ -23,7 +23,7 @@ fn main() {
 
     // Setup terminal
     terminal::enable_raw_mode().expect("Enable raw mode");
-    execute!(&mut stdout, terminal::EnterAlternateScreen, terminal::DisableLineWrap, event::DisableBracketedPaste, event::DisableMouseCapture, cursor::Hide, cursor::SavePosition, event::PushKeyboardEnhancementFlags(event::KeyboardEnhancementFlags::all()),).expect("Initialize terminal");
+    execute!(&mut stdout, terminal::EnterAlternateScreen, terminal::DisableLineWrap, cursor::Hide, cursor::SavePosition, event::PushKeyboardEnhancementFlags(event::KeyboardEnhancementFlags::all()),).expect("Initialize terminal");
 
     // Entities
     let mut entities: Entities = Default::default();
