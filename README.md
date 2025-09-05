@@ -20,7 +20,7 @@
 # Installation
 
 ## Precompiled Binary
-1. Go to github.com/peach-on-the-way/rust-minigame/releases/latest
+1. Go to [the latest release page](https://github.com/peach-on-the-way/rust-minigame/releases/latest)
 2. Download the binary that matches your operating system
   - `rust-minigame-x86_64-linux` if you're on Linux.
 3. Run it inside a terminal!
