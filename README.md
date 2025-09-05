@@ -1,6 +1,7 @@
 # Control
 - The player moves up/down/left/right via `WASD`
 - The player attacks via arrow keys
+- Exit via the escape key.
 
 # Technical Requirements
 1. The game only works and tested on Linux (WSL may work)
