@@ -26,6 +26,9 @@
 3. Run it inside a terminal!
 
 ## Manual
+
+This project requires minimum Rust version of `1.88.0`.
+
 1. Dowloading the project
   ```
   git clone https://github.com/peach-on-the-way/rust-minigame
